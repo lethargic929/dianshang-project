@@ -8,7 +8,7 @@
         <div class="togger" @click="isCollapse=!isCollapse">|||</div>
          <!-- :default-openeds='$router.path' -->
         <el-menu
-          :default-active="defaultActive"
+          :default-active="$router.path"
           class="el-menu-vertical-demo"
           background-color="#545c64"
           text-color="#fff"

@@ -1,39 +1,43 @@
 <template>
   <div>
-      <!-- 分页组件 -->
-       <el-pagination
+    <!-- 分页组件 -->
+    <el-pagination
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="currentPage4"
-      :page-sizes="[100, 200, 300, 400]"
-      :page-size="100"
+      :current-page="pageList.pagenum"
+      :page-sizes="[3, 5, 10, 15]"
+      :page-size="pageList.pagesize"
       layout="total, sizes, prev, pager, next, jumper"
-      :total="400">
-    </el-pagination>
+      :total="total"
+    ></el-pagination>
   </div>
 </template>
 
 <script>
 export default {
-    methods: {
-      handleSizeChange(val) {
-        console.log(`每页 ${val} 条`);
-      },
-      handleCurrentChange(val) {
-        console.log(`当前页: ${val}`);
+  name: "Fenye",
+  data() {
+    return {
+      props: {
+        pageList: {
+          query: "",
+          pagenum: 1,
+          pagesize: 5
+        },
+        total: 0
       }
+    };
+  },
+  methods: {
+    handleSizeChange(val) {
+      this.pageList.pagesize = val;
     },
-    data() {
-      return {
-        currentPage1: 5,
-        currentPage2: 5,
-        currentPage3: 5,
-        currentPage4: 4
-      };
+    handleCurrentChange(val) {
+      this.pageList.pagenum = val;
     }
-}
+  }
+};
 </script>
 
 <style>
-
 </style>

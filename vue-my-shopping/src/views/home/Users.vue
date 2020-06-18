@@ -6,20 +6,22 @@
     </my-bread>
     <el-card class="box-card">
       <div class="text item">
-        <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
+        <el-input placeholder="请输入内容" v-model="pageList.query" class="input-with-select">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="primary" style="margin-left:15px;">添加用户</el-button>
+        <el-button type="primary" style="margin-left:15px;" >添加用户</el-button>
       </div>
       <!-- 表格插入 -->
       <el-table :data="tableData" stripe border style="width: 100%;margin-bottom:15px">
-        <el-table-column prop="date" label="#"></el-table-column>
-        <el-table-column prop="name" label="姓名"></el-table-column>
-        <el-table-column prop="name" label="邮箱"></el-table-column>
-        <el-table-column prop="name" label="电话"></el-table-column>
-        <el-table-column prop="name" label="角色"></el-table-column>
-        <el-table-column prop="name" label="状态">
-          <el-switch v-model="value2" disabled></el-switch>
+        <el-table-column prop="create_time" label="#"></el-table-column>
+        <el-table-column prop="username" label="姓名"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column prop="mobile" label="电话"></el-table-column>
+        <el-table-column prop="role_name" label="角色"></el-table-column>
+        <el-table-column label="状态">
+         <template #default='scope'>
+            <el-switch v-model="scope.row.mg_state" @change="changeStatus(scope.row)"></el-switch>
+         </template>
         </el-table-column>
         <el-table-column label="操作" width="220px">
           <el-button type="primary" icon="el-icon-edit" mini></el-button>
@@ -28,48 +30,74 @@
         </el-table-column>
       </el-table>
       <!-- 分页组件 -->
-      <Fenye></Fenye>
+       <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pageList.pagenum"
+      :page-sizes="[3, 5, 10, 15]"
+      :page-size="pageList.pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total"
+    ></el-pagination>
+      <!-- <Fenye></Fenye> -->
     </el-card>
+   
   </div>
 </template>
 
 <script>
 import MyBread from "../../components/MyBread";
-import Fenye from "../../components/Fenye";
+// import Fenye from "../../components/Fenye";
+
 export default {
   data() {
     return {
-      value2: false,
-      input: "",
-      tableData: [
-        {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
-        },
-        {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1517 弄"
-        },
-        {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1519 弄"
-        },
-        {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1516 弄"
-        }
-      ]
+     pageList:{
+       query:'',
+       pagenum: 1,
+       pagesize: 5
+     },
+      tableData: [],
+      total:0
     };
   },
-  created() {},
-  methods: {},
+  created() {
+    this.getUsers()
+  },
+  methods: {
+    // 获取页码数据
+    async getUsers() {
+    const {data:res} =  await this.$http.get('/users',{params:this.pageList})
+    console.log(res)
+    this.tableData=res.data.users
+    this.total=res.data.total
+    },
+      handleSizeChange(val) {
+       this.pageList.pagesize=val
+        this.getUsers()
+      },
+      handleCurrentChange(val) {
+        this.pageList.pagenum=val
+         this.getUsers()
+      },
+    // 改变状态
+    changeStatus (status) {
+      // 这里写成一个函数是因为需要发请求到后台更新数据的同步
+      // console.log(status)
+      // 发送请求 users/:uId/state/:type 请求方法：put
+      // 获取ID
+      // console.log(status.id,status.mg_state)
+      // 这里可以使用节流或防抖来性能优化
+      this.$http.put(`users/${status.id}/state/${status.mg_state}`).then(res=>{
+        console.log(res)
+      })
+    },
+    // 弹出框
+   
+
+  },
   components: {
-    MyBread,
-    Fenye
+    MyBread
   }
 };
 </script>
