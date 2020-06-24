@@ -10,7 +10,7 @@
         <el-input placeholder="请输入内容" v-model="pageList.query" class="input-with-select">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="primary" style="margin-left:15px;" >添加商品</el-button>
+        <el-button type="primary" style="margin-left:15px;" @click='addGoods'>添加商品</el-button>
       </div>
        <!-- 表格插入 -->
       <el-table :data="tableData" stripe border style="width: 100%;margin-bottom:15px">
@@ -18,7 +18,11 @@
         <el-table-column prop="goods_name" label="商品名称"></el-table-column>
         <el-table-column prop="goods_price" label="商品价格（元）"></el-table-column>
         <el-table-column prop="goods_weight" label="商品重量"></el-table-column>
-        <el-table-column prop="add_time" label="创建时间"></el-table-column>
+        <el-table-column prop="add_time" label="创建时间">
+          <template v-slot='scope'>
+            {{scope.row.add_time|dateformat('YYYY-MM-DD hh:mm:ss')}}
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="220px">
           <el-button type="primary" icon="el-icon-edit" mini>编辑</el-button>
           <el-button type="danger" icon="el-icon-delete" mini>删除</el-button>
@@ -73,6 +77,10 @@ export default {
       handleCurrentChange(val) {
         this.pageList.pagenum=val
          this.getGoodsList()
+      },
+      // 添加商品
+      addGoods () {
+        this.$router.push('/addgoods')
       }
   },
   components: {

@@ -9,14 +9,20 @@ import 'element-ui/lib/theme-chalk/index.css'
 // 引入第三方插件
 import TreeTable from 'vue-table-with-tree-grid'
 
-Vue.use(ElementUI)
+// 引入富文本文件
+import VueQuillEditor from 'vue-quill-editor'
+import 'quill/dist/quill.core.css'
+import 'quill/dist/quill.snow.css'
+import 'quill/dist/quill.bubble.css'
 
+// 引入时间插件
+import moment from 'moment'
 
 // 引入路由
 import axios from 'axios'
 Vue.prototype.$http = axios
 axios.defaults.baseURL = 'http://www.klxin.cn:8888/api/private/v1/'
-
+Vue.use(ElementUI)
 // 请求拦截
 axios.interceptors.request.use(config => {
   // 获取token
@@ -42,9 +48,16 @@ axios.interceptors.response.use(res=> {
   return Promise.reject(err)
 })
 
+Vue.use(VueQuillEditor)
 Vue.component('tree-table',TreeTable)
 
 Vue.config.productionTip = false
+
+// 时间过滤器
+Vue.filter('dateformat',function (dataStr,pattren='YYYY-MM-DD hh:mm:ss') {
+ if(dataStr) return moment(dataStr).format(pattren)
+ return dataStr
+})
 
 new Vue({
   router,
