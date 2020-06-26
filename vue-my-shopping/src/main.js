@@ -35,6 +35,8 @@ axios.interceptors.request.use(config => {
 
 // 响应拦截
 axios.interceptors.response.use(res=> {
+  // 无效token到登录页
+  if(res.data?.meta?.status===400) return router.push('/login')
   // 分两步，第一是请求没有成功
   if (res.status !== 200) {
     return Message.error('网络异常')

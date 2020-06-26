@@ -93,14 +93,13 @@
           </el-tab-pane>
           <el-tab-pane label="商品图片" name="3">
             <el-upload
-              class="upload-demo"
               action="urlBase"
+              :headers="header"
+              list-type="picture-card"
+              :auto-upload="false"
               :on-preview="handlePreview"
               :on-remove="handleRemove"
-              :headers="header"
-              list-type="picture"
-              :auto-upload="false"
-              :on-success="handleSuccess"
+              :on-success='handleSuccess'
             >
               <el-button
                 type="primary"
@@ -117,8 +116,8 @@
         </el-tabs>
       </el-form>
     </el-card>  <!-- 图片预览 -->
-    <el-dialog title="图片预览" :visible.sync="previewVisible" width="50%">
-      <img :src="previewPath" alt="" class="previewImg">
+    <el-dialog title="图片预览" :visible.sync="previewVisible">
+      <img :src="previewPath" alt="" class="previewImg" width="100%">
     </el-dialog>
 
   </div>
@@ -165,6 +164,7 @@ export default {
       },
       previewPath:'',
       previewVisible:false,
+      disabled: false,
       rules: {
         goods_name: [
           { required: true, message: "请输入商品名称", trigger: "blur" }
@@ -241,14 +241,14 @@ export default {
     // 图片预览功能
     handlePreview(file) {
       console.log(file)
-      this.previewPath = file.response.data.url
+      this.previewPath = file.url
       this.previewVisible = true
     },
     // 删除图片
-    handleRemove (file, fileList) {
-      console.log(file, fileList)
+    handleRemove (file) {
+      console.log(file)
       // 1. 获取将要删除的图片的临时路径
-      this.previewPath =file.response.data.tmp_path
+      this.filePath =file.response.data.tmp_path
        // 2. 从 pics 数组中，找到这个图片对应的索引值
        const i = this.goodsList.pics.findIndex(item=>item.pic===filePath)
         // 3. 调用数组的 splice 方法，把图片信息对象，从 pics 数组中移除
