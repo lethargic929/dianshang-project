@@ -18,6 +18,11 @@ import 'quill/dist/quill.bubble.css'
 // 引入时间插件
 import moment from 'moment'
 
+//导入进度条插件
+import NProgress from 'nprogress'
+//导入进度条样式
+import 'nprogress/nprogress.css'
+
 // 引入路由
 import axios from 'axios'
 Vue.prototype.$http = axios
@@ -25,6 +30,8 @@ axios.defaults.baseURL = 'http://www.klxin.cn:8888/api/private/v1/'
 Vue.use(ElementUI)
 // 请求拦截
 axios.interceptors.request.use(config => {
+   //当进入request拦截器，表示发送了请求，我们就开启进度条
+   NProgress.start()
   // 获取token
   const tokenStr = localStorage.getItem('token')
   if(tokenStr) config.headers.Authorization = tokenStr
@@ -35,6 +42,8 @@ axios.interceptors.request.use(config => {
 
 // 响应拦截
 axios.interceptors.response.use(res=> {
+    //当进入response拦截器，表示请求已经结束，我们就结束进度条
+    NProgress.done()
   // 无效token到登录页
   if(res.data?.meta?.status===400) return router.push('/login')
   // 分两步，第一是请求没有成功
